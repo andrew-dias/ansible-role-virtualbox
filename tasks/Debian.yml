@@ -1,7 +1,7 @@
 ---
 - name: Adding Virtualbox APT repository signature
   apt_key:
-    url: {{ virtualbox_apt_key_link }}
+    url: "{{ virtualbox_apt_key_link }}"
     state: present
 
 - name: Adding Virtualbox APT repository
