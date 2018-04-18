@@ -18,3 +18,4 @@
 - name: install VirtualBox package
   apt:
     name: virtualbox-{{ virtualbox_version }}
+    update_cache: yes
