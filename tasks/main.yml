@@ -25,6 +25,7 @@
     mode: 0775
     owner: "{{ virtualbox_user }}"
     group: "{{ virtualbox_group }}"
+    state: directory
   when: virtualbox_create_user
 
 - name: Set VM directory
