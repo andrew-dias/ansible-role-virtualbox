@@ -28,6 +28,7 @@
   when: virtualbox_create_user
 
 - name: Set VM directory
+  become: yes
   become_user: "{{ virtualbox_user }}"
   shell: VBoxManage setproperty machinefolder {{ virtualbox_vmdir }}
   when: virtualbox_create_user
