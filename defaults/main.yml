@@ -1,12 +1,8 @@
 ---
 virtualbox_version: 6.0
-virtualbox_version_minor: 4
-virtualbox_version_full: "{{ virtualbox_version }}.{{ virtualbox_version_minor }}"
 virtualbox_download_site: https://download.virtualbox.org/virtualbox
 virtualbox_apt_repo_link: "{{ virtualbox_download_site }}/debian"
 virtualbox_apt_key_link: https://www.virtualbox.org/download/oracle_vbox_2016.asc
 virtualbox_apt_repo_type: contrib
 virtualbox_vmdir: "{{ ansible_env.HOME }}/vb"
 
-virtualbox_extpack_key: "56be48f923303c8cababb0bb4c478284b688ed23f16d775d729b89a2e8e5f9eb"
-virtualbox_extpack_file: "Oracle_VM_VirtualBox_Extension_Pack-{{ virtualbox_version_full }}.vbox-extpack"

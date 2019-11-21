@@ -1,13 +1,13 @@
 ---
+- name: Add Virtualbox APT repository
+  apt_repository:
+    repo: deb [arch=amd64] {{ virtualbox_apt_repo_link }} {{ ansible_distribution_release }} {{ virtualbox_apt_repo_type }}
+    update_cache: yes
+  become: yes
+
 - name: Add Virtualbox APT repository signature
   apt_key:
     url: "{{ virtualbox_apt_key_link }}"
-  become: yes
-
-- name: Add Virtualbox APT repository
-  apt_repository:
-    repo: deb {{ virtualbox_apt_repo_link }} {{ ansible_distribution_release }} {{ virtualbox_apt_repo_type }}
-    update_cache: yes
   become: yes
 
 - name: Install VirtualBox
@@ -16,45 +16,20 @@
   become: yes
   register: vb_install
 
-- name: Install Extensions Pack and configure user
-  block:
-    - name: Create temporary download directory
-      tempfile:
-        state: directory
-        suffix: ".virtualbox_download"
-      register: virtualbox_download_dir
-      changed_when: no
+- name: Add user to vbox group
+  user:
+    name: "{{ ansible_user_id }}"
+    groups:
+      - vboxusers
+    append: yes
+  become: yes
 
-    - name: Download Oracle Extension Pack for VirtualBox
-      get_url:
-        url: "{{ virtualbox_download_site }}/{{ virtualbox_version_full }}/{{ virtualbox_extpack_file }}"
-        dest: "{{ virtualbox_download_dir.path }}/{{ virtualbox_extpack_file }}"
+- name: Create VM directory
+  file:
+    path: "{{ virtualbox_vmdir }}"
+    state: directory
 
-    - name: Install Oracle Extension Pack
-      shell: VBoxManage extpack install --replace --accept-license={{ virtualbox_extpack_key }} {{ virtualbox_download_dir.path }}/{{ virtualbox_extpack_file }}
-      become: yes
+- name: Set VM directory
+  shell: VBoxManage setproperty machinefolder {{ virtualbox_vmdir }}
+  become: yes
 
-    - name: Add user to vbox group
-      user:
-        name: "{{ ansible_user_id }}"
-        groups:
-          - vboxusers
-        append: yes
-      become: yes
-
-    - name: Create VM directory
-      file:
-        path: "{{ virtualbox_vmdir }}"
-        state: directory
-
-    - name: Set VM directory
-      shell: VBoxManage setproperty machinefolder {{ virtualbox_vmdir }}
-      become: yes
-
-  when: vb_install is changed
-  always:
-    - name: Delete temporary download directory
-      file:
-        path: "{{ virtualbox_download_dir.path }}"
-        state: absent
-      changed_when: no
